@@ -1,6 +1,9 @@
 <script>
     import { cartItems } from "../store";
-    export let orderItems = [];
+    /**
+     * @type {string | any[]}
+     */
+     export let orderItems = [];
 
     cartItems.subscribe(data => orderItems = data);
 
@@ -18,14 +21,6 @@
         toggledItem = id;
     }
 </script>
-
-<style>
-    .order-wrapper {
-        height: 75vh;
-        max-height: 75vh;
-        overflow-y: scroll;
-    }
-</style>
 
 {#if orderItems.length > 0}
     <div class="order-wrapper">

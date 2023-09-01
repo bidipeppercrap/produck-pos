@@ -5,7 +5,10 @@
 
     const { addToOrder } = getContext("orderItems");
 
-    export let productCatalog = [];
+    /**
+     * @type {any[]}
+     */
+     export let productCatalog = [];
 
     products.subscribe((value) => {
         productCatalog = value;
@@ -55,26 +58,44 @@
     .catalog-item:hover {
         cursor: pointer;
     }
+    .product-thumbnail {
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .catalog-wrapper {
+        margin-top: 5.5rem;
+        max-height: calc(100vh - 5.5rem);
+        overflow-y: scroll;
+    }
 </style>
 
 <svelte:window on:keydown={readBarcode}/>
 
 {#if barcodeNotFound}<BarcodeNotFound bind:barcode={lastBarcode} bind:show={barcodeNotFound}/>{/if}
-<div class="position-fixed bg-body border-bottom z-2" style="height: 3rem; width: calc(70vw - var(--bs-sidebar-width));">
+<div class="position-fixed bg-body border-bottom z-2" style="height: 3rem; margin-top: 2.5rem; width: calc(70vw - var(--bs-sidebar-width));">
     <div class="col d-flex justify-content-center mt-2">
         <input bind:value={productQuery} on:keydown={enterBarcode} type="text" id="product-search" class="form-control w-50 align-self-center" placeholder="Search... or use Barcode Scanner">
     </div>
 </div>
-<div class="container" style="padding-top: 5rem; max-height: 100vh; overflow-y: scroll;">
+<div class="container catalog-wrapper pt-3">
     <div class="row row-cols-auto g-2 mb-3">
         {#if productCatalog.length > 0}
         {#each productCatalog as product}
             <div class="col">
                 <div on:click={() => addToOrder(product)} class="catalog-item card mw-100 specific-w-150">
-                    <img src="" alt="product" class="card-img-top" height="150px">
-                    <div class="card-body">
-                        <p class="card-text">{product.name}</p>
-                        <p class="card-text"><strong>{product.price}</strong></p>
+                    {#if product.thumbnail}
+                        <img src={product.thumbnail} alt="product" class="card-img-top" height="150px">
+                    {:else}
+                        <div class="product-thumbnail text-light">
+                            <i class="gg-image">
+                        </div>
+                    {/if}
+                    <div class="card-body p-2">
+                        <p class="card-text m-0">{product.name}</p>
+                        <p class="card-text m-0"><strong>{product.price}</strong></p>
                     </div>
                 </div>
             </div>
