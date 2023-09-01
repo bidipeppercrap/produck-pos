@@ -43,12 +43,27 @@
     }
 
     function removeTicket(i) {
+        if ($tickets.length == 1) {
+            ticket = {
+                id: $staticTicketId,
+                name: `${$staticTicketId}`,
+                cartItems: [],
+                productQuery: "",
+                renameMode: false
+            };
+
+            tickets.set([
+                ticket
+            ]);
+
+            return;
+        }
+
         $tickets.splice(i, 1);
 
         tickets.set([...$tickets]);
 
-        if (i <= $currentTicket) currentTicket.update(n => n - 1);
-        if ($tickets.length < 1) addTicket();
+        if (i <= $currentTicket && $currentTicket > 0) currentTicket.update(n => n - 1);
     }
 
     function renameTicket(ticket, e) {
@@ -102,7 +117,7 @@
     </ul>
     <div class="page-wrapper">
         <div style="margin-right: 30vw;">
-            <ProductCatalog />
+            <ProductCatalog bind:productQuery={ticket.productQuery} />
         </div>
         <div class="position-fixed d-flex flex-column border-start h-100 end-0" style="width: 30vw; padding-top: calc(2.5rem - 2px)">
             <div style="overflow-y: scroll; flex: 1;">
