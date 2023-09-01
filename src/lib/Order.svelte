@@ -1,17 +1,14 @@
 <script>
-    import { cartItems } from "../store";
     /**
      * @type {string | any[]}
      */
      export let orderItems = [];
 
-    cartItems.subscribe(data => orderItems = data);
-
     let toggledItem = "";
     
     function removeFromOrder(product = { id: null }) {
-        $cartItems.splice($cartItems.findIndex(item => item.id == product.id), 1);
-        $cartItems = [...$cartItems];
+        orderItems.splice(orderItems.findIndex(item => item.id == product.id), 1);
+        orderItems = [...orderItems];
         if (toggledItem == product.id) toggledItem = "";
     }
 

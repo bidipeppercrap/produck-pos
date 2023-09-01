@@ -1,24 +1,30 @@
 <script>
     import { setContext } from "svelte";
-    import { cartItems, tickets, staticTicketId, currentTicket } from "../store";
+    import { tickets, staticTicketId, currentTicket } from "../store";
     import Order from "$lib/Order.svelte";
     import ProductCatalog from "$lib/ProductCatalog.svelte";
     import renameIcon from "$lib/assets/rename.svg";
-    import checkIcon from "$lib/assets/check.svg";
 
     setContext('orderItems', { addToOrder });
 
+    let ticket = $tickets[0];
+
+    currentTicket.subscribe(value => ticket = $tickets[value]);
+
     function addToOrder(product) {
-        const existing = $cartItems.filter(item => item.id == product.id);
+        const existing = ticket.cartItems.filter(item => item.id == product.id);
 
         if (!existing[0]) {
-            product.qty = 1;
-            $cartItems = [...$cartItems, product]
+            const productSnapshot = {
+                ...product,
+                qty: 1
+            };
+            ticket.cartItems = [...ticket.cartItems, productSnapshot];
         }
 
         if (existing[0]) {
             existing[0].qty += 1;
-            $cartItems = [...$cartItems];
+            ticket.cartItems = [...ticket.cartItems];
         }
     }
 
@@ -100,7 +106,7 @@
         </div>
         <div class="position-fixed d-flex flex-column border-start h-100 end-0" style="width: 30vw; padding-top: calc(2.5rem - 2px)">
             <div style="overflow-y: scroll; flex: 1;">
-                <Order />
+                <Order bind:orderItems={ticket.cartItems} />
             </div>
             <div class="order-actions pt-2 border-top">
                 <div class="container h-100 d-flex flex-column">

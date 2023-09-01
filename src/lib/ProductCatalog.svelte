@@ -1,6 +1,6 @@
 <script>
     import { getContext } from "svelte";
-    import { products } from "../store";
+    import { products, currentTicket, tickets } from "../store";
     import BarcodeNotFound from "./BarcodeNotFound.svelte";
 
     const { addToOrder } = getContext("orderItems");
@@ -10,15 +10,19 @@
      */
      export let productCatalog = [];
 
-    products.subscribe((value) => {
-        productCatalog = value;
-    })
-    
-    let productQuery = "";
+    let ticket = $tickets[0];
     let barcodeQuery = "";
     let scanning = false;
     let lastBarcode = "";
     let barcodeNotFound = false;
+
+    products.subscribe((value) => {
+        productCatalog = value;
+    });
+
+    currentTicket.subscribe(value => {
+        ticket = $tickets[value];
+    });
 
     function readBarcode(e) {
         if (barcodeNotFound) return;
@@ -46,7 +50,7 @@
 
     function enterBarcode(e) {
         if (e.key == "Enter") {
-            productQuery = "";
+            ticket.productQuery = "";
         }
     }
 </script>
@@ -77,7 +81,7 @@
 {#if barcodeNotFound}<BarcodeNotFound bind:barcode={lastBarcode} bind:show={barcodeNotFound}/>{/if}
 <div class="position-fixed bg-body border-bottom z-2" style="height: 3rem; margin-top: 2.5rem; width: calc(70vw - var(--bs-sidebar-width));">
     <div class="col d-flex justify-content-center mt-2">
-        <input bind:value={productQuery} on:keydown={enterBarcode} type="text" id="product-search" class="form-control w-50 align-self-center" placeholder="Search... or use Barcode Scanner">
+        <input bind:value={ticket.productQuery} on:keydown={enterBarcode} type="text" id="product-search" class="form-control w-50 align-self-center" placeholder="Search... or use Barcode Scanner">
     </div>
 </div>
 <div class="container catalog-wrapper pt-3">
