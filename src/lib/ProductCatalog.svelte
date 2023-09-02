@@ -1,6 +1,5 @@
 <script>
-    import { afterUpdate, getContext } from "svelte";
-    import BarcodeNotFound from "./BarcodeNotFound.svelte";
+    import { getContext } from "svelte";
     import ChevronLeft from "$lib/assets/chevron-left.svg";
     import ChevronRight from "$lib/assets/chevron-right.svg";
 
@@ -11,39 +10,10 @@
      */
      export let productCatalog = [];
     export let currentPage = 1;
+    export let pageLimit = 80;
 
     $: paginatedProducts = productCatalog.slice((currentPage - 1) * pageLimit, currentPage * pageLimit);
 
-    let barcodeQuery = "";
-    let scanning = false;
-    let lastBarcode = "";
-    let barcodeNotFound = false;
-
-    const pageLimit = 12;
-
-    function readBarcode(e = { key: "" }) {
-        if (barcodeNotFound) return;
-        if (e.key == "Enter") {
-            if (barcodeQuery.length > 2) {
-                const product = productCatalog.filter(p => p.barcode == barcodeQuery);
-                if (!product[0]) { barcodeNotFound = true; lastBarcode = barcodeQuery; };
-                if (product[0]) addToOrder(product[0]);
-    
-                barcodeQuery = "";
-            }
-        } else {
-            if (e.key == "Shift") return;
-            barcodeQuery += e.key;
-        };
-
-        if (!scanning) {
-            scanning = true;
-            setTimeout(() => {
-                barcodeQuery = "";
-                scanning = false;
-            }, 200);
-        }
-    }
 </script>
 
 <style>
@@ -67,9 +37,6 @@
     }
 </style>
 
-<svelte:window on:keydown={readBarcode}/>
-
-{#if barcodeNotFound}<BarcodeNotFound bind:barcode={lastBarcode} bind:show={barcodeNotFound}/>{/if}
 <div class="container catalog-wrapper pt-3">
     {#if productCatalog.length > 0}
         <div class="row row-cols-auto g-2 mb-3">

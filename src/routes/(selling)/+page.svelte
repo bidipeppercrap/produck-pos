@@ -1,9 +1,9 @@
 <script>
     import { setContext } from "svelte";
     import { tickets, currentTicket, products } from "../../store";
-    import { goto } from "$app/navigation";
     import Order from "$lib/Order.svelte";
     import ProductCatalog from "$lib/ProductCatalog.svelte";
+    import BarcodeNotFound from "$lib/BarcodeNotFound.svelte";
     import ProductCatalogSearchBar from "$lib/ProductCatalogSearchBar.svelte";
 
     setContext('orderItems', { addToOrder });
@@ -15,6 +15,35 @@
 
     tickets.subscribe(value => ticket = value[$currentTicket]);
     currentTicket.subscribe(value => ticket = $tickets[value]);
+
+    let barcodeQuery = "";
+    let scanning = false;
+    let lastBarcode = "";
+    let barcodeNotFound = false;
+
+    function readBarcode(e = { key: "" }) {
+        if (barcodeNotFound) return;
+        if (e.key == "Enter") {
+            if (barcodeQuery.length > 2) {
+                const product = $products.filter(p => p.barcode == barcodeQuery);
+                if (!product[0]) { barcodeNotFound = true; lastBarcode = barcodeQuery; };
+                if (product[0]) addToOrder(product[0]);
+    
+                barcodeQuery = "";
+            }
+        } else {
+            if (e.key == "Shift") return;
+            barcodeQuery += e.key;
+        };
+
+        if (!scanning) {
+            scanning = true;
+            setTimeout(() => {
+                barcodeQuery = "";
+                scanning = false;
+            }, 200);
+        }
+    }
 
     function addToOrder(product = { id: 0 }) {
         const existing = ticket.cartItems.filter(item => item.id == product.id);
@@ -35,7 +64,6 @@
 
     function processPayment() {
         if (ticket.cartItems.length > 0) {
-            goto("/payment/" + ticket.id);
         }
     }
 </script>
@@ -59,11 +87,15 @@
     <title>ProDuck - Point of Sale</title>
 </svelte:head>
 
+<svelte:window on:keydown={readBarcode}/>
+
+{#if barcodeNotFound}<BarcodeNotFound bind:barcode={lastBarcode} bind:show={barcodeNotFound}/>{/if}
+
 <div class="page-wrapper">
     <div style="margin-right: 30vw; width: 100%;">
         <ProductCatalogSearchBar bind:productQuery={productQuery} />
         <div class="catalog-container">
-            <ProductCatalog bind:currentPage={ticket.currentPage} bind:productCatalog={filteredProducts} />
+            <ProductCatalog pageLimit={10} bind:currentPage={ticket.currentPage} bind:productCatalog={filteredProducts} />
         </div>
     </div>
     <div class="position-fixed d-flex flex-column border-start end-0" style="width: 30vw; height: calc(100vh - 2.5rem + 2px);">
