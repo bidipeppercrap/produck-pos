@@ -56,14 +56,10 @@
     .rename-button:hover {
         opacity: .75;
     }
-
-    .tab-wrapper {
-        padding-top: 5.5rem;
-    }
 </style>
 
 <div class="tab-wrapper">
-    <ul class="position-fixed ps-3 nav nav-tabs pt-2 w-100 z-2 bg-body top-0">
+    <ul class="position-fixed ps-3 nav nav-tabs pt-2 w-100 z-2 bg-body">
         {#each $tickets as ticket, i (ticket.id)}
             <li class="nav-item">
                 {#if ticket.renameMode}

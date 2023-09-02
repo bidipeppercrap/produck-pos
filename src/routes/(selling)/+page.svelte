@@ -47,6 +47,11 @@
 
     .page-wrapper {
         display: flex;
+        padding-top: calc(2.5rem - 2px);
+    }
+
+    .catalog-container {
+        padding-top: 3rem;
     }
 </style>
 
@@ -57,9 +62,11 @@
 <div class="page-wrapper">
     <div style="margin-right: 30vw; width: 100%;">
         <ProductCatalogSearchBar bind:productQuery={productQuery} />
-        <ProductCatalog bind:currentPage={ticket.currentPage} bind:productCatalog={filteredProducts} />
+        <div class="catalog-container">
+            <ProductCatalog bind:currentPage={ticket.currentPage} bind:productCatalog={filteredProducts} />
+        </div>
     </div>
-    <div class="position-fixed d-flex flex-column border-start h-100 end-0" style="width: 30vw; padding-top: calc(2.5rem - 2px)">
+    <div class="position-fixed d-flex flex-column border-start end-0" style="width: 30vw; height: calc(100vh - 2.5rem + 2px);">
         <div style="overflow-y: scroll; flex: 1;">
             <Order bind:orderItems={ticket.cartItems} />
         </div>

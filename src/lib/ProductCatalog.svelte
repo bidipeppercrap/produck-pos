@@ -1,6 +1,5 @@
 <script>
-    import { getContext } from "svelte";
-    import { products } from "../store";
+    import { afterUpdate, getContext } from "svelte";
     import BarcodeNotFound from "./BarcodeNotFound.svelte";
     import ChevronLeft from "$lib/assets/chevron-left.svg";
     import ChevronRight from "$lib/assets/chevron-right.svg";
@@ -20,11 +19,7 @@
     let lastBarcode = "";
     let barcodeNotFound = false;
 
-    const pageLimit = 5;
-
-    products.subscribe((value) => {
-        productCatalog = value;
-    });
+    const pageLimit = 12;
 
     function readBarcode(e = { key: "" }) {
         if (barcodeNotFound) return;
@@ -66,7 +61,6 @@
     }
 
     .catalog-wrapper {
-        margin-top: 5.5rem;
         max-height: calc(100vh - 5.5rem);
         height: calc(100vh - 5.5rem);
         overflow-y: scroll;
