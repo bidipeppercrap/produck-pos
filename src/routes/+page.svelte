@@ -9,6 +9,7 @@
 
     let ticket = $tickets[0];
 
+    tickets.subscribe(value => ticket = value[$currentTicket]);
     currentTicket.subscribe(value => ticket = $tickets[value]);
 
     function addToOrder(product) {
@@ -43,8 +44,8 @@
     }
 
     function removeTicket(i) {
-        if ($tickets.length == 1) {
-            ticket = {
+        if ($tickets.length === 1) {
+            const newTicket = {
                 id: $staticTicketId,
                 name: `${$staticTicketId}`,
                 cartItems: [],
@@ -52,9 +53,9 @@
                 renameMode: false
             };
 
-            tickets.set([
-                ticket
-            ]);
+            tickets.set([newTicket]);
+
+            currentTicket.set(0);
 
             return;
         }
