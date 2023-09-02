@@ -37,6 +37,7 @@
             name: `${$staticTicketId}`,
             cartItems: [],
             productQuery: "",
+            currentPage: 1,
             renameMode: false
         };
 
@@ -50,6 +51,7 @@
                 name: `${$staticTicketId}`,
                 cartItems: [],
                 productQuery: "",
+                currentPage: 1,
                 renameMode: false
             };
 
@@ -97,7 +99,7 @@
 
 <div class="tab-wrapper">
     <ul class="position-fixed ps-3 nav nav-tabs pt-2 w-100 z-2 bg-body">
-        {#each $tickets as ticket, i}
+        {#each $tickets as ticket, i (ticket.id)}
             <li class="nav-item">
                 {#if ticket.renameMode}
                     <div class="rename-wrapper p-1">
@@ -117,8 +119,8 @@
         </li>
     </ul>
     <div class="page-wrapper">
-        <div style="margin-right: 30vw;">
-            <ProductCatalog bind:productQuery={ticket.productQuery} />
+        <div style="margin-right: 30vw; width: 100%;">
+            <ProductCatalog bind:currentPage={ticket.currentPage} bind:productQuery={ticket.productQuery} />
         </div>
         <div class="position-fixed d-flex flex-column border-start h-100 end-0" style="width: 30vw; padding-top: calc(2.5rem - 2px)">
             <div style="overflow-y: scroll; flex: 1;">

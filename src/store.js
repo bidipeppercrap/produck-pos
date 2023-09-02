@@ -6,6 +6,7 @@ export const tickets = writable([
         name: "1",
         cartItems: [],
         productQuery: "",
+        currentPage: 1,
         renameMode: false
     }
 ]);

@@ -74,6 +74,12 @@ export function load() {
             name: "Bearing Nachi 6304",
             price: 37,
             barcode: "9f29d63e-1970-435d-bf8b-34d6fdf0745e"
+        },
+        {
+            id: 13,
+            name: "Piston Kit AHM KWB Std",
+            price: 147,
+            barcode: ""
         }
     ];
 
