@@ -21,7 +21,7 @@
 
 {#if orderItems.length > 0}
     <div class="order-wrapper">
-        {#each orderItems as item}
+        {#each orderItems as item (item.id)}
             <div on:click={() => toggleOptions(item.id)} class:bg-light={item.id == toggledItem} class="d-flex justify-content-between align-items-start px-3 py-2 border-bottom">
                 <div class="me-auto">
                     <div class="fw-bold">{item.name}</div>

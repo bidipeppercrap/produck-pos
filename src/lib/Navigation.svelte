@@ -5,7 +5,7 @@
         {
             icon: "🛒",
             title: "Sell",
-            route: "/"
+            route: "/",
         },
         {
             icon: "🧾",
@@ -29,7 +29,7 @@
     <div class="d-flex flex-column p-2 g-2" style="gap: var(--bs-gutter-y);">
         {#each routes as r}
             <a href={r.route} class="nav-link">
-                <button type="button" class="btn w-100" class:btn-secondary={r.route != path} class:btn-primary={r.route == path}>
+                <button type="button" class="btn w-100" class:btn-secondary={r.route != path && (r.route != "/" || (path?.includes("/(selling)") ? false : true) )} class:btn-primary={r.route == path || (path ? path.includes("/(selling)") : false)}>
                     <div class="d-flex flex-column">
                         <div class="fs-5">{r.icon}</div>
                         <div class="text-secondary" style="font-size: .65rem!important;">{r.title}</div>

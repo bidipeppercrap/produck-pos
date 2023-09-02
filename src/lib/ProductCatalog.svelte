@@ -11,11 +11,9 @@
      * @type {any[]}
      */
      export let productCatalog = [];
-    export let productQuery = "";
     export let currentPage = 1;
 
-    $: filteredProducts = (productCatalog.filter(p => p.name.toLowerCase().includes(productQuery.toLowerCase())));
-    $: paginatedProducts = filteredProducts.slice((currentPage - 1) * pageLimit, currentPage * pageLimit);
+    $: paginatedProducts = productCatalog.slice((currentPage - 1) * pageLimit, currentPage * pageLimit);
 
     let barcodeQuery = "";
     let scanning = false;
@@ -51,12 +49,6 @@
             }, 200);
         }
     }
-
-    function enterBarcode(e = { key: "" }) {
-        if (e.key == "Enter") {
-            productQuery = "";
-        }
-    }
 </script>
 
 <style>
@@ -84,13 +76,8 @@
 <svelte:window on:keydown={readBarcode}/>
 
 {#if barcodeNotFound}<BarcodeNotFound bind:barcode={lastBarcode} bind:show={barcodeNotFound}/>{/if}
-<div class="position-fixed bg-body border-bottom z-2" style="height: 3rem; margin-top: 2.5rem; width: calc(70vw - var(--bs-sidebar-width));">
-    <div class="col d-flex justify-content-center mt-2">
-        <input bind:value={productQuery} on:keydown={enterBarcode} type="text" id="product-search" class="form-control w-50 align-self-center" placeholder="Search... or use Barcode Scanner">
-    </div>
-</div>
 <div class="container catalog-wrapper pt-3">
-    {#if filteredProducts.length > 0}
+    {#if productCatalog.length > 0}
         <div class="row row-cols-auto g-2 mb-3">
             {#each paginatedProducts as product (product.id)}
                 <div class="col">
@@ -110,14 +97,14 @@
                 </div>
             {/each}
         </div>
-        {#if filteredProducts.length > pageLimit}
+        {#if productCatalog.length > pageLimit}
             <ul class="pagination justify-content-center">
                 <li on:click={() => {if (currentPage != 1) currentPage--}} class="page-item" class:disabled={currentPage == 1}>
                     <a class="page-link" aria-label="Previous">
                         <img src={ChevronLeft} alt="Previous">
                     </a>
                 </li>
-                <li on:click={() => {if (Math.ceil(filteredProducts.length / pageLimit) != currentPage) currentPage++}} class="page-item" class:disabled={Math.ceil(filteredProducts.length / pageLimit) == currentPage}>
+                <li on:click={() => {if (Math.ceil(productCatalog.length / pageLimit) != currentPage) currentPage++}} class="page-item" class:disabled={Math.ceil(productCatalog.length / pageLimit) == currentPage}>
                     <a class="page-link" aria-label="Next">
                         <img src={ChevronRight} alt="Next">
                     </a>

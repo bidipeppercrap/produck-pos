@@ -1,6 +1,6 @@
-import { products } from '../store';
+import { products } from '../../store';
 
-/** @type {import('./$types').PageLoad} */
+/** @type {import('../$types').PageLoad} */
 export function load() {
     const data = [
         {
