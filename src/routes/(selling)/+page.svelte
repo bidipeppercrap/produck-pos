@@ -5,12 +5,14 @@
     import ProductCatalog from "$lib/ProductCatalog.svelte";
     import BarcodeNotFound from "$lib/BarcodeNotFound.svelte";
     import ProductCatalogSearchBar from "$lib/ProductCatalogSearchBar.svelte";
+    import PaymentLanding from "$lib/Payment/PaymentLanding.svelte";
 
     setContext('orderItems', { addToOrder });
 
     let ticket = $tickets[0];
     let productQuery = "";
 
+    $: totalCost = ticket.cartItems.reduce((accumulator, currentValue) => accumulator + (currentValue.qty * currentValue.price), 0);
     $: filteredProducts = ($products.filter(p => p.name.toLowerCase().includes(productQuery.toLowerCase())));
 
     tickets.subscribe(value => ticket = value[$currentTicket]);
@@ -21,11 +23,15 @@
     let lastBarcode = "";
     let barcodeNotFound = false;
 
+    function findProductByBarcode(products = [{ id: 1, barcode: "" }], barcode = "") {
+        return products.filter(p => p.barcode == barcode);
+    }
+
     function readBarcode(e = { key: "" }) {
         if (barcodeNotFound) return;
         if (e.key == "Enter") {
             if (barcodeQuery.length > 2) {
-                const product = $products.filter(p => p.barcode == barcodeQuery);
+                const product = findProductByBarcode($products, barcodeQuery);
                 if (!product[0]) { barcodeNotFound = true; lastBarcode = barcodeQuery; };
                 if (product[0]) addToOrder(product[0]);
     
@@ -64,6 +70,7 @@
 
     function processPayment() {
         if (ticket.cartItems.length > 0) {
+            ticket.landing = "payment";
         }
     }
 </script>
@@ -91,9 +98,12 @@
 
 {#if barcodeNotFound}<BarcodeNotFound bind:barcode={lastBarcode} bind:show={barcodeNotFound}/>{/if}
 
+{#if ticket.landing == "payment"}
+<PaymentLanding bind:totalCost={totalCost} bind:landing={ticket.landing} />
+{:else}
 <div class="page-wrapper">
     <div style="margin-right: 30vw; width: 100%;">
-        <ProductCatalogSearchBar bind:productQuery={productQuery} />
+        <ProductCatalogSearchBar bind:products={$products} bind:productQuery={productQuery} />
         <div class="catalog-container">
             <ProductCatalog pageLimit={10} bind:currentPage={ticket.currentPage} bind:productCatalog={filteredProducts} />
         </div>
@@ -111,7 +121,7 @@
                 </div>
                 <div class="row mt-2 mb-2 flex-fill">
                     <div class="col d-flex">
-                        <button on:click={processPayment} type="button" class="w-100 btn btn-primary specific-h-50">
+                        <button disabled={ticket.cartItems.length < 1} on:click={processPayment} type="button" class="w-100 btn btn-primary specific-h-50">
                             <div class="flex flex-column">
                                 <div class="fs-5">Payment</div>
                             </div>
@@ -122,3 +132,5 @@
         </div>
     </div>
 </div>
+{/if}
+

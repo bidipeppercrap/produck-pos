@@ -11,7 +11,8 @@
             cartItems: [],
             productQuery: "",
             currentPage: 1,
-            renameMode: false
+            renameMode: false,
+            landing: "catalog"
         };
 
         tickets.set([...$tickets, ticket])
@@ -25,7 +26,8 @@
                 cartItems: [],
                 productQuery: "",
                 currentPage: 1,
-                renameMode: false
+                renameMode: false,
+                landing: "catalog"
             };
 
             tickets.set([newTicket]);
