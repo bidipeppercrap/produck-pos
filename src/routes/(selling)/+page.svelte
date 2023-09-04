@@ -6,11 +6,14 @@
     import BarcodeNotFound from "$lib/BarcodeNotFound.svelte";
     import ProductCatalogSearchBar from "$lib/ProductCatalogSearchBar.svelte";
     import PaymentLanding from "$lib/Payment/PaymentLanding.svelte";
+    import SetQuantityModal from "$lib/SetQuantityModal.svelte";
 
     setContext('orderItems', { addToOrder });
 
     let ticket = $tickets[0];
     let productQuery = "";
+    let setQuantityMode = false;
+    let productQty = 1;
 
     $: totalCost = ticket.cartItems.reduce((accumulator, currentValue) => accumulator + (currentValue.qty * currentValue.price), 0);
     $: filteredProducts = ($products.filter(p => p.name.toLowerCase().includes(productQuery.toLowerCase())));
@@ -27,13 +30,31 @@
         return products.filter(p => p.barcode == barcode);
     }
 
-    function readBarcode(e = { key: "" }) {
+    function pageKeydownListener(e = { key: "", altKey: "" }) {
+        if (e.altKey && e.key == "q") {
+            setQuantityMode = true;
+        } else {
+            readBarcode(e, productQty);
+        }
+    }
+
+    function readBarcode(e = { key: "" }, qty = 1) {
         if (barcodeNotFound) return;
         if (e.key == "Enter") {
             if (barcodeQuery.length > 2) {
+                if (isNaN(qty)) {
+                    barcodeNotFound = true;
+                    lastBarcode = "Invalid Qty";
+                    return;
+                }
+                if (typeof qty == "string") qty = parseInt(qty);
                 const product = findProductByBarcode($products, barcodeQuery);
                 if (!product[0]) { barcodeNotFound = true; lastBarcode = barcodeQuery; };
-                if (product[0]) addToOrder(product[0]);
+                if (product[0]) {
+                    addToOrder(product[0], qty)
+                    productQty = 1;
+                    setQuantityMode = false;
+                };
     
                 barcodeQuery = "";
             }
@@ -51,19 +72,19 @@
         }
     }
 
-    function addToOrder(product = { id: 0 }) {
+    function addToOrder(product = { id: 0 }, qty = 1) {
         const existing = ticket.cartItems.filter(item => item.id == product.id);
 
         if (!existing[0]) {
             const productSnapshot = {
                 ...product,
-                qty: 1
+                qty: qty
             };
             ticket.cartItems = [...ticket.cartItems, productSnapshot];
         }
 
         if (existing[0]) {
-            existing[0].qty += 1;
+            existing[0].qty += qty;
             ticket.cartItems = [...ticket.cartItems];
         }
     }
@@ -94,9 +115,10 @@
     <title>ProDuck - Point of Sale</title>
 </svelte:head>
 
-<svelte:window on:keydown={readBarcode}/>
+<svelte:window on:keydown={pageKeydownListener}/>
 
 {#if barcodeNotFound}<BarcodeNotFound bind:barcode={lastBarcode} bind:show={barcodeNotFound}/>{/if}
+{#if setQuantityMode}<SetQuantityModal bind:qty={productQty} bind:show={setQuantityMode} />{/if}
 
 {#if ticket.landing == "payment"}
 <PaymentLanding bind:totalCost={totalCost} bind:landing={ticket.landing} />
