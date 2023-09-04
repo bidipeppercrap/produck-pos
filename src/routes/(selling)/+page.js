@@ -80,6 +80,18 @@ export function load() {
             name: "Piston Kit AHM KWB Std",
             price: 147,
             barcode: ""
+        },
+        {
+            id: 14,
+            name: 'Cutting Wheel Sali 4"',
+            price: 7,
+            barcode: "asd"
+        },
+        {
+            id: 15,
+            name: "Abrasive Paper Sali 600",
+            price: 5,
+            barcode: "qwe"
         }
     ];
 

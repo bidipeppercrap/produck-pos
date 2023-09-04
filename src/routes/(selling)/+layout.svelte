@@ -12,7 +12,8 @@
             productQuery: "",
             currentPage: 1,
             renameMode: false,
-            landing: "catalog"
+            landing: "catalog",
+            selectedCustomer: null,
         };
 
         tickets.set([...$tickets, ticket])
@@ -27,7 +28,8 @@
                 productQuery: "",
                 currentPage: 1,
                 renameMode: false,
-                landing: "catalog"
+                landing: "catalog",
+                selectedCustomer: null,
             };
 
             tickets.set([newTicket]);

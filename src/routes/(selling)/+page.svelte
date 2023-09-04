@@ -1,22 +1,40 @@
 <script>
     import { setContext } from "svelte";
-    import { tickets, currentTicket, products } from "../../store";
+    import { tickets, currentTicket, products, customers } from "../../store";
     import Order from "$lib/Order.svelte";
     import ProductCatalog from "$lib/ProductCatalog.svelte";
     import BarcodeNotFound from "$lib/BarcodeNotFound.svelte";
     import ProductCatalogSearchBar from "$lib/ProductCatalogSearchBar.svelte";
     import PaymentLanding from "$lib/Payment/PaymentLanding.svelte";
     import SetQuantityModal from "$lib/SetQuantityModal.svelte";
+    import SelectCustomerModal from "$lib/SelectCustomerModal.svelte";
 
     setContext('orderItems', { addToOrder });
 
     let ticket = $tickets[0];
     let productQuery = "";
     let setQuantityMode = false;
+    let selectCustomerModal = false;
     let productQty = 1;
 
-    $: totalCost = ticket.cartItems.reduce((accumulator, currentValue) => accumulator + (currentValue.qty * currentValue.price), 0);
+    $: totalCost = currentCart.reduce((accumulator, currentValue) => accumulator + (currentValue.qty * currentValue.price), 0);
     $: filteredProducts = ($products.filter(p => p.name.toLowerCase().includes(productQuery.toLowerCase())));
+    $: currentCart = ticket.cartItems.map(p => {
+        let productPrice = p.price;
+        const customerPrice = ticket.selectedCustomer ? ticket.selectedCustomer.priceList.filter(pl => pl.productId == p.id && pl.minQty <= p.qty) : [];
+
+        if (customerPrice.length > 0) productPrice = customerPrice[0].price;
+
+        const product = {
+            id: p.id,
+            name: p.name,
+            qty: p.qty,
+            price: productPrice,
+            barcode: p.barcode
+        };
+
+        return product;
+    });
 
     tickets.subscribe(value => ticket = value[$currentTicket]);
     currentTicket.subscribe(value => ticket = $tickets[value]);
@@ -119,6 +137,7 @@
 
 {#if barcodeNotFound}<BarcodeNotFound bind:barcode={lastBarcode} bind:show={barcodeNotFound}/>{/if}
 {#if setQuantityMode}<SetQuantityModal bind:qty={productQty} bind:show={setQuantityMode} />{/if}
+{#if selectCustomerModal}<SelectCustomerModal bind:selectedCustomer={ticket.selectedCustomer} bind:customers={$customers} bind:show={selectCustomerModal} />{/if}
 
 {#if ticket.landing == "payment"}
 <PaymentLanding bind:totalCost={totalCost} bind:landing={ticket.landing} />
@@ -132,13 +151,13 @@
     </div>
     <div class="position-fixed d-flex flex-column border-start end-0" style="width: 30vw; height: calc(100vh - 2.5rem + 2px);">
         <div style="overflow-y: scroll; flex: 1;">
-            <Order bind:orderItems={ticket.cartItems} />
+            <Order bind:orderItems={ticket.cartItems} bind:displayItems={currentCart} />
         </div>
         <div class="order-actions pt-2 border-top">
             <div class="container h-100 d-flex flex-column">
                 <div class="row">
                     <div class="col">
-                        <button type="button" class="w-100 btn btn-secondary">Customers</button>
+                        <button on:click={() => selectCustomerModal = true} type="button" class="w-100 btn btn-secondary">👤 {ticket.selectedCustomer ? ticket.selectedCustomer.name : "Customer"}</button>
                     </div>
                 </div>
                 <div class="row mt-2 mb-2 flex-fill">
