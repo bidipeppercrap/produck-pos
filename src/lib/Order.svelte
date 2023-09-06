@@ -52,7 +52,7 @@
                     <div class="d-flex p-3 gap-2">
                         <div class="input-group">
                             <span class="input-group-text">Price</span>
-                            <input on:keydown={e => e.key == "Enter" ? toggleOptions(item.id) : null} on:blur={() => setModified(item.id)} bind:value={selectedItem.price} class="form-control" type="number" id="cart-item-edit-price">
+                            <input on:keydown={e => e.key == "Enter" ? toggleOptions(item.id) : null} on:focus={() => setModified(item.id)} bind:value={selectedItem.price} class="form-control" type="number" id="cart-item-edit-price">
                         </div>
                         <div class="input-group">
                             <span class="input-group-text">Qty</span>
