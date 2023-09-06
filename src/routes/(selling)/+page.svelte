@@ -24,6 +24,7 @@
         const customerPrice = ticket.selectedCustomer ? ticket.selectedCustomer.priceList.filter(pl => pl.productId == p.id && pl.minQty <= p.qty) : [];
 
         if (customerPrice.length > 0) productPrice = customerPrice[0].price;
+        if (p.modifiedPrice) productPrice = p.price;
 
         const product = {
             id: p.id,
