@@ -8,14 +8,26 @@
     import PaymentLanding from "$lib/Payment/PaymentLanding.svelte";
     import SetQuantityModal from "$lib/SetQuantityModal.svelte";
     import SelectCustomerModal from "$lib/SelectCustomerModal.svelte";
+    import ReceiptLanding from "$lib/Receipt/ReceiptLanding.svelte";
 
     setContext('orderItems', { addToOrder });
+    setContext('payment', { pay })
 
     let ticket = $tickets[0];
     let productQuery = "";
     let setQuantityMode = false;
     let selectCustomerModal = false;
     let productQty = 1;
+    let receipt = {
+        orderItems: [{
+            id: 0,
+            name: "",
+            price: 0,
+            qty: 0
+        }],
+        cash: 0,
+        customer: null
+    };
 
     $: totalCost = currentCart.reduce((accumulator, currentValue) => accumulator + (currentValue.qty * currentValue.price), 0);
     $: filteredProducts = ($products.filter(p => p.name.toLowerCase().includes(productQuery.toLowerCase())));
@@ -113,6 +125,19 @@
             ticket.landing = "payment";
         }
     }
+
+    function pay(cash = "0") {
+        receipt = {
+            orderItems: [...currentCart],
+            cash: parseInt(cash),
+            customer: ticket.selectedCustomer
+        };
+
+        // Finish the transaction
+        console.log(receipt);
+
+        ticket.landing = "receipt";
+    }
 </script>
 
 <style>
@@ -142,6 +167,8 @@
 
 {#if ticket.landing == "payment"}
 <PaymentLanding bind:totalCost={totalCost} bind:landing={ticket.landing} />
+{:else if ticket.landing == "receipt"}
+<ReceiptLanding bind:landing={ticket.landing} orderItems={receipt.orderItems} cash={receipt.cash} customer={receipt.customer} />
 {:else}
 <div class="page-wrapper">
     <div style="margin-right: 30vw; width: 100%;">
@@ -154,7 +181,15 @@
         <div style="overflow-y: scroll; flex: 1;">
             <Order bind:orderItems={ticket.cartItems} bind:displayItems={currentCart} />
         </div>
+
         <div class="order-actions pt-2 border-top">
+
+            {#if totalCost > 0}
+                <div class="border-bottom pe-2 mb-2">
+                    <h6 class="text-end">Total: {totalCost}</h6>
+                </div>
+            {/if}
+
             <div class="container h-100 d-flex flex-column">
                 <div class="row">
                     <div class="col">

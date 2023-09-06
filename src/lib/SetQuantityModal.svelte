@@ -4,10 +4,10 @@
     export let qty = 1;
     export let show = false;
 
-    let qtyInput = { focus: () => {} };
+    let qtyInput = { select: () => {} };
     let qtyDone = false;
 
-    onMount(() => qtyInput.focus());
+    onMount(() => qtyInput.select());
 
     function waitingBarcode(e = { key: "" }) {
         if (e.key == "Enter") {
