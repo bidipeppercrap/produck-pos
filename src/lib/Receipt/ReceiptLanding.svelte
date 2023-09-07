@@ -50,6 +50,6 @@
         <button on:click={() => landing = "catalog"} type="button" class="btn btn-primary">New Order</button>
     </div>
     <div class="receipt-wrapper mt-3">
-        <Receipt customer={customer.name} cash={cash} orderItems={orderItems} />
+        <Receipt customer={customer ? customer.name : null} cash={cash} orderItems={orderItems} />
     </div>
 </div>

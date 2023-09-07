@@ -61,9 +61,12 @@
         return products.filter(p => p.barcode == barcode);
     }
 
-    function pageKeydownListener(e = { key: "", altKey: "" }) {
+    function pageKeydownListener(e = { key: "", altKey: "", ctrlKey: "" }) {
         if (e.altKey && e.key == "q") {
             setQuantityMode = true;
+        } else if (e.ctrlKey && e.key == " ") {
+            if (ticket.landing == "catalog") processPayment();
+            if (ticket.landing == "receipt") ticket.landing = "catalog";
         } else {
             readBarcode(e, productQty);
         }

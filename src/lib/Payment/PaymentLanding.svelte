@@ -15,6 +15,12 @@
     $: remainingCost = totalCost - cash;
 
     onMount(() => cashInput.select());
+
+    function cashInputListener(e = { key: "", ctrlKey: "" }) {
+        if (e.key == "Enter" && remainingCost <= 0 && (isNaN(remainingCost) == false)) {
+            pay(cash);
+        }
+    }
 </script>
 
 <style>
@@ -43,7 +49,7 @@
             <div class="card-body">
                 <div class="input-group">
                     <span class="input-group-text">Cash</span>
-                    <input bind:this={cashInput} bind:value={cash} type="text" id="cash" class="form-control">
+                    <input on:keydown={cashInputListener} bind:this={cashInput} bind:value={cash} type="text" id="cash" class="form-control">
                 </div>
             </div>
         </div>
