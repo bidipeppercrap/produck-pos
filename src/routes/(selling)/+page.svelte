@@ -9,6 +9,7 @@
     import SetQuantityModal from "$lib/SetQuantityModal.svelte";
     import SelectCustomerModal from "$lib/SelectCustomerModal.svelte";
     import ReceiptLanding from "$lib/Receipt/ReceiptLanding.svelte";
+    import CartDetails from "$lib/CartDetails.svelte";
 
     setContext('orderItems', { addToOrder });
     setContext('payment', { pay })
@@ -17,6 +18,7 @@
     let productQuery = "";
     let setQuantityMode = false;
     let selectCustomerModal = false;
+    let showCartDetail = false;
     let productQty = 1;
     let receipt = {
         orderItems: [{
@@ -43,6 +45,7 @@
             name: p.name,
             qty: p.qty,
             price: productPrice,
+            cost: p.cost,
             barcode: p.barcode
         };
 
@@ -171,6 +174,7 @@
 {#if barcodeNotFound}<BarcodeNotFound bind:barcode={lastBarcode} bind:show={barcodeNotFound}/>{/if}
 {#if setQuantityMode}<SetQuantityModal bind:qty={productQty} bind:show={setQuantityMode} />{/if}
 {#if selectCustomerModal}<SelectCustomerModal bind:selectedCustomer={ticket.selectedCustomer} bind:customers={$customers} bind:show={selectCustomerModal} />{/if}
+{#if showCartDetail}<CartDetails bind:orderItems={currentCart} bind:show={showCartDetail} />{/if}
 
 {#if ticket.landing == "payment"}
 <PaymentLanding bind:totalCost={totalCost} bind:landing={ticket.landing} />
@@ -198,6 +202,16 @@
             {/if}
 
             <div class="container h-100 d-flex flex-column">
+                {#if ticket.cartItems.length > 0}
+                    <div class="row mb-2 gap-2">
+                        <div class="col pe-0">
+                            <button on:click={() => showCartDetail = true} type="button" class="d-block w-100 btn btn-outline-secondary">Info</button>
+                        </div>
+                        <div class="col ps-0">
+                            <button type="button" class="d-block w-100 btn btn-outline-danger">Return</button>
+                        </div>
+                    </div>
+                {/if}
                 <div class="row">
                     <div class="col">
                         <button on:click={() => selectCustomerModal = true} type="button" class="w-100 btn btn-secondary">👤 {ticket.selectedCustomer ? ticket.selectedCustomer.name : "Customer"}</button>
