@@ -1,4 +1,6 @@
 <script>
+    import Receipt from "./Receipt.svelte";
+
     export let landing = "receipt";
     export let orderItems = [{
         price: 0,
@@ -19,7 +21,10 @@
     }
     .receipt-wrapper {
         max-height: 100%;
+        height: 75vh;
         overflow-y: scroll;
+        width: 300px;
+        align-self: center;
     }
 
     .header {
@@ -44,5 +49,7 @@
         </h1>
         <button on:click={() => landing = "catalog"} type="button" class="btn btn-primary">New Order</button>
     </div>
-    <div class="receipt-wrapper"></div>
+    <div class="receipt-wrapper mt-3">
+        <Receipt customer={customer.name} cash={cash} orderItems={orderItems} />
+    </div>
 </div>

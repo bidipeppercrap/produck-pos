@@ -134,6 +134,10 @@
         };
 
         // Finish the transaction
+        ticket.cartItems = [];
+        ticket.selectedCustomer = null;
+        ticket.productQuery = "";
+        ticket.currentPage = 1;
         console.log(receipt);
 
         ticket.landing = "receipt";

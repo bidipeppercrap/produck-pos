@@ -1,5 +1,13 @@
 import { writable } from "svelte/store";
 
+export const posSession = writable({
+    posId: 0,
+    userId: 0,
+    company: {
+        name: "Wijaya Motor",
+        logo: ""
+    }
+});
 export const tickets = writable([
     {
         id: 1,
