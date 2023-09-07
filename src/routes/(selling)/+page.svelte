@@ -10,6 +10,7 @@
     import SelectCustomerModal from "$lib/SelectCustomerModal.svelte";
     import ReceiptLanding from "$lib/Receipt/ReceiptLanding.svelte";
     import CartDetails from "$lib/CartDetails.svelte";
+    import ReturnLanding from "$lib/Return/ReturnLanding.svelte";
 
     setContext('orderItems', { addToOrder });
     setContext('payment', { pay })
@@ -180,6 +181,8 @@
 <PaymentLanding bind:totalCost={totalCost} bind:landing={ticket.landing} />
 {:else if ticket.landing == "receipt"}
 <ReceiptLanding bind:landing={ticket.landing} orderItems={receipt.orderItems} cash={receipt.cash} customer={receipt.customer} />
+{:else if ticket.landing == "return"}
+<ReturnLanding />
 {:else}
 <div class="page-wrapper">
     <div style="margin-right: 30vw; width: 100%;">
@@ -208,7 +211,7 @@
                             <button on:click={() => showCartDetail = true} type="button" class="d-block w-100 btn btn-outline-secondary">Info</button>
                         </div>
                         <div class="col ps-0">
-                            <button type="button" class="d-block w-100 btn btn-outline-danger">Return</button>
+                            <button on:click={() => ticket.landing = "return"} type="button" class="d-block w-100 btn btn-outline-danger">Return</button>
                         </div>
                     </div>
                 {/if}

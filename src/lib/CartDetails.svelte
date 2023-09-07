@@ -4,7 +4,7 @@
 
     $: totalCost = orderItems.reduce((acc, val) => acc += (val.qty * val.cost), 0);
     $: totalPrice = orderItems.reduce((acc, val) => acc += (val.qty * val.price), 0);
-    $: totalMargin = ((totalPrice - totalCost) / totalCost) * 100;
+    $: totalMargin = ((totalPrice - totalCost) / totalPrice) * 100;
 
     function thousand(number = 0) {
         const formatter = new Intl.NumberFormat("en-US");
@@ -72,7 +72,7 @@
                                         <span style="font-weight: bold;">= {thousand((item.price * item.qty) - (item.cost * item.qty))}</span>
                                     </div>
                                     <div class="calculation">
-                                        <span><strong>Margin = {Math.floor((((item.price * item.qty) - (item.cost * item.qty)) / (item.cost * item.qty)) * 100)}%</strong></span>
+                                        <span><strong>Margin = {Math.floor((((item.price * item.qty) - (item.cost * item.qty)) / (item.price * item.qty)) * 100)}%</strong></span>
                                     </div>
                                 </div>
                             {/each}
