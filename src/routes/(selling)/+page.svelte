@@ -182,7 +182,7 @@
 {:else if ticket.landing == "receipt"}
 <ReceiptLanding bind:landing={ticket.landing} orderItems={receipt.orderItems} cash={receipt.cash} customer={receipt.customer} />
 {:else if ticket.landing == "return"}
-<ReturnLanding />
+<ReturnLanding bind:landing={ticket.landing} bind:orderItems={ticket.cartItems} />
 {:else}
 <div class="page-wrapper">
     <div style="margin-right: 30vw; width: 100%;">
