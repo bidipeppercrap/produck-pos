@@ -41,7 +41,9 @@
             errorMessage = error;
         }
 
-        if (data) goto("/");
+        if (data) {
+            goto("/pos");
+        };
     }
 </script>
 

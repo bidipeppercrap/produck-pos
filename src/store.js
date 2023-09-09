@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
 
+export const user = writable();
 export const posSession = writable({
     posId: 0,
     userId: 0,
