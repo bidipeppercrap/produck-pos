@@ -20,7 +20,7 @@
                     name: "Bearing NKN 6201 2RS",
                     qty: 2,
                     cost: 5.3,
-                    price: 10
+                    price: 11
                 }
             ]
         },
