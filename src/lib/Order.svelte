@@ -1,4 +1,6 @@
 <script>
+    import { toStringDelimit } from "./numbering";
+
     /**
      * @type {string | any[]}
      */
@@ -41,10 +43,10 @@
                 <div on:click={() => toggleOptions(item.id)} class="d-flex justify-content-between align-items-start px-3 py-2">
                     <div class="me-auto">
                         <div class="fw-bold">{item.name}</div>
-                        <span class="ms-2 text-body-secondary"><strong>{item.qty}</strong> Units at {item.price} / Units</span>
+                        <span class="ms-2 text-body-secondary"><strong>{toStringDelimit(item.qty)}</strong> Units at {toStringDelimit(item.price)} / Units</span>
                     </div>
                     <div class="d-flex flex-column align-items-end">
-                        <span class="badge text-bg-primary rounded-pill mb-1">{item.price * item.qty}</span>
+                        <span class="badge text-bg-primary rounded-pill mb-1">{toStringDelimit(item.price * item.qty)}</span>
                         <button style="font-size: .65rem;" on:click={() => removeFromOrder(item)} type="button" class="btn-close" aria-label="Close"></button>
                     </div>
                 </div>

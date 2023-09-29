@@ -1,4 +1,5 @@
 <script>
+    import { toStringDelimit } from "./numbering";
     import { getContext } from "svelte";
     import ChevronLeft from "$lib/assets/chevron-left.svg";
     import ChevronRight from "$lib/assets/chevron-right.svg";
@@ -52,7 +53,7 @@
                         {/if}
                         <div class="card-body p-2">
                             <p class="card-text m-0">{product.name}</p>
-                            <p class="card-text m-0"><strong>{product.price}</strong></p>
+                            <p class="card-text m-0"><strong>{toStringDelimit(product.price)}</strong></p>
                         </div>
                     </div>
                 </div>

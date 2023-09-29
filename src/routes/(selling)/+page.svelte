@@ -1,5 +1,5 @@
 <script>
-    import { setContext } from "svelte";
+    import { onMount, setContext } from "svelte";
     import { tickets, currentTicket, products, customers } from "../../store";
     import Order from "$lib/Order.svelte";
     import ProductCatalog from "$lib/ProductCatalog.svelte";
@@ -11,6 +11,11 @@
     import ReceiptLanding from "$lib/Receipt/ReceiptLanding.svelte";
     import CartDetails from "$lib/CartDetails.svelte";
     import ReturnLanding from "$lib/Return/ReturnLanding.svelte";
+    import { toStringDelimit } from "$lib/numbering";
+
+    export let data;
+
+    onMount(() => products.set(data.payload));
 
     setContext('orderItems', { addToOrder });
     setContext('payment', { pay })
@@ -32,26 +37,11 @@
         customer: null
     };
 
+    let prices_resolved = false;
+    $: prices = (fetchCustomerPrices)(ticket.selectedCustomer).then(() => prices_resolved = true);
     $: totalCost = currentCart.reduce((accumulator, currentValue) => accumulator + (currentValue.qty * currentValue.price), 0);
     $: filteredProducts = ($products.filter(p => p.name.toLowerCase().includes(productQuery.toLowerCase())));
-    $: currentCart = ticket.cartItems.map(p => {
-        let productPrice = p.price;
-        const customerPrice = ticket.selectedCustomer ? ticket.selectedCustomer.priceList.filter(pl => pl.productId == p.id && pl.minQty <= p.qty) : [];
-
-        if (customerPrice.length > 0) productPrice = customerPrice[0].price;
-        if (p.modifiedPrice) productPrice = p.price;
-
-        const product = {
-            id: p.id,
-            name: p.name,
-            qty: p.qty,
-            price: productPrice,
-            cost: p.cost,
-            barcode: p.barcode
-        };
-
-        return product;
-    });
+    $: currentCart = getCart(ticket.cartItems, ticket.selectedCustomer, prices, prices_resolved);
 
     tickets.subscribe(value => ticket = value[$currentTicket]);
     currentTicket.subscribe(value => ticket = $tickets[value]);
@@ -60,6 +50,31 @@
     let scanning = false;
     let lastBarcode = "";
     let barcodeNotFound = false;
+
+    function getCart(cartItems, selectedCustomer, prices, pricesResolved = false) {
+        const cart = cartItems.map(p => {
+            let productPrice = p.price;
+
+            let customerPrice = [];
+            if (pricesResolved) customerPrice = selectedCustomer ? prices.filter(pl => pl.productId == p.id && pl.minQty <= p.qty) : [];
+
+            if (customerPrice.length > 0) productPrice = customerPrice[0].price;
+            if (p.modifiedPrice) productPrice = p.price;
+
+            const product = {
+                id: p.id,
+                name: p.name,
+                qty: p.qty,
+                price: productPrice,
+                cost: p.cost,
+                barcode: p.barcode
+            };
+
+            return product;
+        });
+
+        return cart;
+    }
 
     function findProductByBarcode(products = [{ id: 1, barcode: "" }], barcode = "") {
         return products.filter(p => p.barcode == barcode);
@@ -133,21 +148,48 @@
         }
     }
 
-    function pay(cash = "0") {
+    async function pay(cash = "0") {
         receipt = {
             orderItems: [...currentCart],
             cash: parseInt(cash),
             customer: ticket.selectedCustomer
         };
 
-        // Finish the transaction
+        const orderItems = currentCart.map(ci => {
+            ci.product = { id: ci.id }
+
+            return ci;
+        });
+
+        const order = {
+            customerId: ticket.selectedCustomer ? ticket.selectedCustomer.id : null,
+            items: orderItems
+        };
+
+        await fetch("/api/orders", {
+            method: "POST",
+            body: JSON.stringify(order)
+        });
+
         ticket.cartItems = [];
         ticket.selectedCustomer = null;
         ticket.productQuery = "";
         ticket.currentPage = 1;
-        console.log(receipt);
 
         ticket.landing = "receipt";
+    }
+
+    async function fetchCustomerPrices(customer) {
+        let returnData = [];
+
+        if (!customer) return returnData;
+
+        const res = await fetch(`/customerprices/customers/all/${customer.id}`);
+        const result = await res.json();
+
+        if (result) returnData = result;
+
+        return returnData;
     }
 </script>
 
@@ -174,7 +216,7 @@
 
 {#if barcodeNotFound}<BarcodeNotFound bind:barcode={lastBarcode} bind:show={barcodeNotFound}/>{/if}
 {#if setQuantityMode}<SetQuantityModal bind:qty={productQty} bind:show={setQuantityMode} />{/if}
-{#if selectCustomerModal}<SelectCustomerModal bind:selectedCustomer={ticket.selectedCustomer} bind:customers={$customers} bind:show={selectCustomerModal} />{/if}
+{#if selectCustomerModal}<SelectCustomerModal bind:selectedCustomer={ticket.selectedCustomer} bind:show={selectCustomerModal} />{/if}
 {#if showCartDetail}<CartDetails bind:orderItems={currentCart} bind:show={showCartDetail} />{/if}
 
 {#if ticket.landing == "payment"}
@@ -200,7 +242,7 @@
 
             {#if totalCost > 0}
                 <div class="border-bottom pe-2 mb-2">
-                    <h6 class="text-end">Total: {totalCost}</h6>
+                    <h6 class="text-end">Total: {toStringDelimit(totalCost)}</h6>
                 </div>
             {/if}
 

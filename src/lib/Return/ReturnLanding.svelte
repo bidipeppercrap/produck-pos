@@ -8,39 +8,44 @@
 
     let orderList = [];
     let selectedOrder = null;
-    $: displayItems = selectedOrder ? selectedOrder.orderItems : [];
+    $: orderitemsPromise = (fetchOrderItems)(selectedOrder);
 
-    // send order items to server and fetch orderList
-    onMount(() => {
-        orderList = [{
-            date: Date.now(),
-            orderItems: [
-                {
-                    id: 1,
-                    name: "Bearing NKN 6201 2RS",
-                    qty: 2,
-                    cost: 5.3,
-                    price: 11
-                }
-            ]
-        },
-        {
-            date: Date.now(),
-            orderItems: [
-                {
-                    id: 1,
-                    name: "Bearing NKN 6201 2RS",
-                    qty: 5,
-                    cost: 5.5,
-                    price: 10
-                }
-            ]
-        }]
+    async function fetchOrderItems(order = null) {
+        const returnData = {
+            payload: []
+        };
+
+        if (!order) return returnData;
+
+        const res = await fetch(`/api/orderitems/${order.id}`);
+        const result = await res.json();
+
+        if (result) returnData.payload = result.map(x => {
+            x.name = x.product.name;
+            return x;
+        });
+        return returnData;
+    }
+
+    onMount(async () => {
+        let orderToReturn = [];
+        if (orderItems.length > 0) orderToReturn = orderItems.map(i => {
+            i.product = { id: i.id };
+            return i;
+        })
+
+        const res = await fetch("/api/return", {
+            method: "POST",
+            body: JSON.stringify(orderToReturn)
+        });
+        const result = await res.json();
+
+        if (result) return orderList = result;
     });
 
-    function returnOrder() {
-        orderItems.map(i => {
-            const returnItem = (selectedOrder.orderItems.filter(ri => ri.id == i.id))[0];
+    async function returnOrder() {
+        orderItems.map(async i => {
+            const returnItem = (await orderitemsPromise).payload.filter(oi => oi.product.id == i.id)[0];
 
             i.qty *= -1;
             i.price = returnItem.price;
@@ -78,12 +83,16 @@
             <OrderList bind:selectedOrder={selectedOrder} orderList={orderList} />
         </div>
         <div class="card" style="flex: 1;">
-            <div class="disable-click">
-                <Order orderItems={displayItems} displayItems={displayItems} />
-            </div>
-            <div class="card-body">
-                <button on:click={returnOrder} type="button" class="w-100 d-block btn btn-danger" disabled={displayItems.length < 1}>Return</button>
-            </div>
+            {#await orderitemsPromise}
+                <h3>Loading...</h3>
+            {:then { payload }}
+                <div class="disable-click">
+                    <Order orderItems={payload} displayItems={payload} />
+                </div>
+                <div class="card-body">
+                    <button on:click={returnOrder} type="button" class="w-100 d-block btn btn-danger" disabled={payload.length < 1}>Return</button>
+                </div>
+            {/await}
         </div>
     </div>
 </div>

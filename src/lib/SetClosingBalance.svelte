@@ -1,39 +1,22 @@
 <script>
     import { onMount } from "svelte";
-    import { posSession } from "../store";
+    import { toStringDelimit } from "./numbering";
 
     export let show = false;
 
-    let orders = [];
+    let totalSessionPrice = 0;
     let closingBalance = 0;
+    let closingRemark = "";
+    let openingBalance = 0;
 
-    $: totalSessionCost = orders.reduce((acc, val) => acc += val.orderItems.reduce((acc2, val2) => acc2 += (val2.qty * val2.price), 0), 0);
-    $: totalBalance = $posSession.openingBalance + totalSessionCost;
+    $: totalBalance = openingBalance + totalSessionPrice;
 
-    onMount(() => {
-        // fetch orders for this session
-        orders = [{
-            id: 1,
-            orderItems: [
-                {
-                    price: 10,
-                    qty: 2
-                },
-                {
-                    price: 12,
-                    qty: 1
-                }
-            ]
-        },
-        {
-            id: 2,
-            orderItems: [
-                {
-                    price: 12,
-                    qty: -1
-                }
-            ]
-        }];
+    onMount(async () => {
+        const res = await fetch("/api/current-session");
+        const result = await res.json();
+
+        openingBalance = result.openingBalance;
+        totalSessionPrice = result.totalSalesPrice;
     });
 </script>
 
@@ -64,10 +47,14 @@
                 </div>
                 <div class="modal-body">
                     <div class="card p-2 mb-2">
-                        <span>It should be: <strong>{$posSession.openingBalance}</strong> (opening balance) + <strong>{totalSessionCost}</strong> (total this session) = <strong>{totalBalance}</strong></span>
-                        <span>You are missing: <strong>{totalBalance - closingBalance}</strong></span>
+                        <span>It should be: <br>
+                            <strong>{toStringDelimit(openingBalance)}</strong> (opening balance) + <strong>{toStringDelimit(totalSessionPrice)}</strong> (total this session)<br>
+                            = <strong>{toStringDelimit(totalBalance)}</strong>
+                        </span><br>
+                        <span>You are missing: <strong>{toStringDelimit(totalBalance - closingBalance)}</strong></span>
                     </div>
-                    <input bind:value={closingBalance} type="number" class="form-control">
+                    <input bind:value={closingBalance} type="number" class="form-control mb-2">
+                    <textarea bind:value={closingRemark} class="form-control" rows="5" placeholder="Closing remark"></textarea>
                 </div>
                 <div class="modal-body d-flex gap-2">
                     <button on:click={() => show = false} type="button" class="d-block w-100 btn btn-secondary">Cancel</button>

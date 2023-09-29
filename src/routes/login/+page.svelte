@@ -27,23 +27,19 @@
     }
 
     async function login() {
-        const response = await fetch("/login", {
+        const formData = new FormData();
+        formData.append("username", credentials.username);
+        formData.append("password", credentials.password);
+
+        const res = await fetch("/login", {
             method: "POST",
-            body: JSON.stringify(credentials),
-            headers: {
-                "content-type": "application/json"
-            }
+            body: formData
         });
 
-        const { data, error } = await response.json();
+        const result = await res.json();
 
-        if (error) {
-            errorMessage = error;
-        }
-
-        if (data) {
-            goto("/pos");
-        };
+        if (result.type == "failure") return errorMessage = result.data;
+        goto("/pos");
     }
 </script>
 
@@ -53,7 +49,9 @@
             <div class="card-header">Login</div>
             <div class="card-body">
                 {#if errorMessage}
-                    {errorMessage}
+                    <div class="alert alert-danger mb-2">
+                        {errorMessage}
+                    </div>
                 {/if}
                 <div class="input-group mb-2">
                     <span class="input-group-text">Username</span>

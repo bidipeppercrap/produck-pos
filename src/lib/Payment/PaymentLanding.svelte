@@ -1,4 +1,5 @@
 <script>
+    import { toStringDelimit } from "$lib/numbering";
     import { getContext, onMount } from "svelte";
 
     export let landing = "catalog";
@@ -44,7 +45,7 @@
     <div class="d-flex flex-column align-items-center gap-2 align-self-center" style="width: 20rem;">
         <div class="card w-100">
             <div class="card-body" style="align-self: center;">
-                <h1>{remainingCost}</h1>
+                <h1>{toStringDelimit(remainingCost)}</h1>
             </div>
             <div class="card-body">
                 <div class="input-group">

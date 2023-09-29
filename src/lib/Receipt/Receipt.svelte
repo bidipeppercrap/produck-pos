@@ -1,5 +1,5 @@
 <script>
-    import { posSession } from "../../store";
+    import { company } from "../../store";
     export let orderItems = [];
     export let cash = 0;
     export let customer = null;
@@ -132,10 +132,10 @@
 
 <div class="receipt-container">
     <div class="receipt-header">
-        {#if $posSession.company.logo}
-            <img src={$posSession.company.logo} alt="Company logo">
+        {#if $company.logo}
+            <img src={$company.logo} alt="Company logo">
         {:else}
-            <h5 class="text-center">{$posSession.company.name}</h5>
+            <h5 class="text-center">{$company.name}</h5>
         {/if}
         {#if customer}<div class="receipt-customer">Customer: {customer}</div>{/if}
     </div>
@@ -149,7 +149,7 @@
             {:else}
                 <div class="order-item-multi">
                     <div class="product-name">{item.name}</div>
-                    <div class="product-qty">{thousand(item.qty)} x {thousand(item.price)}</div>
+                    <div class="product-qty">{thousand(item.qty)} Units x {thousand(item.price)}</div>
                     <div class="product-price">{thousand(item.qty * item.price)}</div>
                 </div>
             {/if}
