@@ -13,9 +13,16 @@
 <div class="list-group">
     {#each orderList as order}
         <a on:click={() => selectedOrder = order} class="list-group-item list-group-item-action d-flex">
-            <div><span class="badge text-bg-secondary">{simpleDateTime(order.createdAt)}</span></div>
+            <div>
+                <span class="badge text-bg-secondary">{simpleDateTime(order.createdAt)}</span>
+            </div>
             <div class="vr mx-3"></div>
-            <div><span class="badge text-bg-success">{toStringDelimit(order.totalPrice)}</span> total cost</div>
+            <div>
+                {#if order.hasReturn}
+                    <span class="badge text-bg-danger">has return</span>
+                {/if}
+                <span class="badge text-bg-success">{toStringDelimit(order.totalPrice)}</span> total cost
+            </div>
             <div class="vr mx-3"></div>
             <div>Served by <strong>{order.servedBy.name ? order.servedBy.name : order.servedBy.username}</strong></div>
         </a>

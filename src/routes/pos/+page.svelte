@@ -21,6 +21,8 @@
     import { goto } from "$app/navigation";
     import { formatDistance, format } from "date-fns";
 
+    import Pagination from "$lib/Pagination.svelte";
+
     let keyword = "";
     let keywordTimer = 0;
     let keywordCurrentPage = 1;
@@ -39,7 +41,10 @@
     async function search(keyword = "", currentPage = 1) {
         const returnData = {
             payload: [],
-            pagination: null
+            pagination: {
+                totalPages: 1,
+                page: 1
+            }
         }
         const res = await fetch(`/pos?keyword=${keyword}&page=${currentPage}`);
         const result = await res.json();
@@ -58,7 +63,7 @@
         <h1>Loading...</h1>
     {:then { payload, pagination }}
         {#if payload.length > 0}
-            <div class="d-flex gap-3">
+            <div class="d-flex gap-3 mb-3">
                 {#each payload as item}
                     <div on:click={() => goto(`/pos/${item.id}`)} class="card specific-w-350">
                         <div class="card-body">
@@ -78,6 +83,12 @@
                     </div>
                 {/each}
             </div>
+            <Pagination
+                on:nextPage={() => keywordCurrentPage += 1}
+                on:prevPage={() => keywordCurrentPage -= 1}
+                totalPages={pagination.totalPages}
+                currentPage={pagination.page}
+            />
         {:else}
             <h1>No Assigned POS yet.</h1>
         {/if}

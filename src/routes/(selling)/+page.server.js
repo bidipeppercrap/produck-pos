@@ -1,5 +1,4 @@
 import { fetchServer } from '$lib/fetcher';
-import { products } from '../../store';
 
 /** @type {import('../$types').PageServerLoad} */
 export async function load({ locals, fetch }) {
