@@ -1,6 +1,8 @@
 <script>
     import { page } from "$app/stores";
 
+    import Logo from "$lib/assets/wijayamotor.svg";
+
     export let closeSession;
     export let signOut;
 
@@ -26,8 +28,8 @@
 </script>
 
 <nav class="sidebar">
-    <div class="d-flex specific-h-100 border-bottom">
-        <div class="align-self-center sidebar-brand">PoS</div>
+    <div class="d-flex align-items-center justify-content-center specific-h-100 border-bottom">
+        <img style="max-height: 100px; max-width: 50px;" src={Logo} alt="PoS Logo">
     </div>
     <div class="d-flex flex-column p-2 g-2" style="gap: var(--bs-gutter-y); height: 100%;">
         {#each routes as r}
