@@ -71,14 +71,12 @@
                     <button on:click={() => {show = false;}} type="button" class="btn-close" aria-label="Close">
                 </div>
                 <div class="modal-body">
-                    <input bind:this={customerQueryInput} on:keyup={keywordDebounce} class="form-control" type="text" id="modal-customer" tabindex="-1">
-                    {#if selectedCustomer}<button class="btn btn-secondary d-block w-100 mt-2" on:click={() => selectCustomer(null)} type="button">❌ Clear</button>{/if}
-                </div>
-                {#await searchPromise}
-                    <h1>Loading...</h1>
-                {:then { payload, pagination }} 
-                    {#if payload.length > 0}
-                        <div class="modal-body">
+                    <input bind:this={customerQueryInput} on:keyup={keywordDebounce} class="form-control mb-3" type="text" id="modal-customer" tabindex="-1" placeholder="Search customers">
+                    {#if selectedCustomer}<button class="btn btn-secondary d-block w-100 mb-2" on:click={() => selectCustomer(null)} type="button">❌ Clear</button>{/if}
+                    {#await searchPromise}
+                        <h1>Loading...</h1>
+                    {:then { payload, pagination }} 
+                        {#if payload.length > 0}
                             <div class="list-group mb-2">
                                 {#each payload as item}
                                     <a on:click={() => selectCustomer(item)} class:active={selectedCustomer ? item.id == selectedCustomer.id : false} class="list-group-item list-group-item-action">
@@ -92,13 +90,11 @@
                                 totalPages={pagination.totalPages}
                                 currentPage={pagination.page}
                             />
-                        </div>
-                    {:else}
-                        <div class="modal-body">
-                            No customer yet.
-                        </div>
-                    {/if}
-                {/await}
+                        {:else}
+                            No customer found.
+                        {/if}
+                    {/await}
+                </div>
             </div>
         </div>
     </div>
