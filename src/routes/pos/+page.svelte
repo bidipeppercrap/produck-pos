@@ -67,11 +67,11 @@
                 {#each payload as item}
                     <div on:click={() => goto(`/pos/${item.id}`)} class="card specific-w-350">
                         <div class="card-body">
-                            <h5 class="card-title">{item.name} {#if !item.lastSession.closedAt}<span class="badge text-bg-success">open</span>{/if}</h5>
+                            <h5 class="card-title">{item.name} {#if item.lastSession}{#if !item.lastSession.closedAt}<span class="badge text-bg-success">open</span>{/if}{/if}</h5>
                             <p class="card-text">
                                 {#if item.lastSession}
                                     {#if item.lastSession.closedAt}
-                                        Last session: <strong>{simpleDateTime(item.lastSession.openedAt)} - {simpleDateTime(item.lastSession.closedAt)}</strong>
+                                        Last session: <strong>{simpleDateTime(item.lastSession.openedAt)} to {simpleDateTime(item.lastSession.closedAt)}</strong>
                                     {:else}
                                         Opened at <strong>{simpleDateTime(item.lastSession.openedAt) + " (" + formatDistance(new Date(item.lastSession.openedAt), new Date(), { addSuffix: true }) + ")"}</strong>
                                     {/if}

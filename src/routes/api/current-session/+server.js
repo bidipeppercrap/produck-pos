@@ -1,8 +1,9 @@
 import { fetchServer } from '$lib/fetcher';
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET({ fetch, locals }) {
-    const posRes = await fetchServer(fetch, `/pos/${locals.posId}`, {
+export async function GET({ fetch, locals, cookies }) {
+    const posId = locals.posId ? locals.posId : cookies.get("pos_id");
+    const posRes = await fetchServer(fetch, `/pos/${posId}`, {
         headers: { "Authorization": `Bearer ${locals.authToken}`}
     });
     const posResult = await posRes.json();

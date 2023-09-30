@@ -12,9 +12,19 @@
 
         goto("/login");
     }
+
+    async function closeSession(event) {
+        await fetch("/close", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(event.detail.closing)
+        });
+
+        goto("/pos");
+    }
 </script>
 
-{#if showClosingBalance}<SetClosingBalance bind:show={showClosingBalance} />{/if}
+{#if showClosingBalance}<SetClosingBalance on:closeSession={closeSession} bind:show={showClosingBalance} />{/if}
 
 <Navigation signOut={signOut} closeSession={() => showClosingBalance = true} />
 <slot></slot>

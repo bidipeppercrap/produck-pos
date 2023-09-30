@@ -1,6 +1,8 @@
 <script>
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import { toStringDelimit } from "./numbering";
+
+    const dispatch = createEventDispatcher();
 
     export let show = false;
 
@@ -58,7 +60,7 @@
                 </div>
                 <div class="modal-body d-flex gap-2">
                     <button on:click={() => show = false} type="button" class="d-block w-100 btn btn-secondary">Cancel</button>
-                    <button type="button" class="d-block w-100 btn btn-danger">Close Session</button>
+                    <button on:click={() => {dispatch("closeSession", { closing: { closingBalance, closingRemark } }); show = false;}} type="button" class="d-block w-100 btn btn-danger">Close Session</button>
                 </div>
             </div>
         </div>

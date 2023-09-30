@@ -10,5 +10,12 @@ export async function load({ locals, fetch, params, cookies }) {
 
     cookies.set("pos_id", result.payload.id, { path: "/" });
 
+    const sessionRes = await fetch("/api/current-session");
+    const session = await sessionRes.json();
+
+    if (!session || session.closedAt) {
+        throw redirect(307, "/open")
+    };
+
     throw redirect(307, "/");
 }

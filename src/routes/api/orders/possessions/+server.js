@@ -9,7 +9,7 @@ export async function GET({ fetch, url, locals }) {
     const res = await fetchServer(fetch, `/orders/possessions/${session.id}?page=${page}`, {
         headers: { "Authorization": `Bearer ${locals.authToken}` }
     });
-    if (res.status != 204) console.log("aw");
+    if (res.status != 200) console.log("aw");
     const result = await res.json();
 
 
