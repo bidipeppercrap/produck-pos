@@ -37,12 +37,12 @@
         customer: null
     };
 
-    let prices_resolved = false;
-    $: prices = (fetchCustomerPrices)(ticket.selectedCustomer).then(() => prices_resolved = true);
+    let prices = [];
+    $: (fetchCustomerPrices)(ticket.selectedCustomer).then(data => prices = data);
     $: totalCost = currentCart.reduce((accumulator, currentValue) => accumulator + (currentValue.qty * currentValue.price), 0);
     $: productKeyword = productQuery.trim().split(" ");
     $: filteredProducts = ($products.filter(p => productKeyword.every(query => p.name.toLowerCase().includes(query.toLowerCase()))));
-    $: currentCart = getCart(ticket.cartItems, ticket.selectedCustomer, prices, prices_resolved);
+    $: currentCart = getCart(ticket.cartItems, prices);
 
     tickets.subscribe(value => ticket = value[$currentTicket]);
     currentTicket.subscribe(value => ticket = $tickets[value]);
@@ -52,12 +52,12 @@
     let lastBarcode = "";
     let barcodeNotFound = false;
 
-    function getCart(cartItems, selectedCustomer, prices, pricesResolved = false) {
+    function getCart(cartItems, prices) {
         const cart = cartItems.map(p => {
             let productPrice = p.price;
 
             let customerPrice = [];
-            if (pricesResolved) customerPrice = selectedCustomer ? prices.filter(pl => pl.productId == p.id && pl.minQty <= p.qty) : [];
+            customerPrice = prices.length > 0 ? prices.filter(pl => pl.productId == p.id && pl.minQty <= p.qty) : [];
 
             if (customerPrice.length > 0) productPrice = customerPrice[0].price;
             if (p.modifiedPrice) productPrice = p.price;
@@ -189,7 +189,6 @@
         const result = await res.json();
 
         if (result) returnData = result;
-
         return returnData;
     }
 </script>
