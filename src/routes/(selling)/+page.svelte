@@ -40,7 +40,8 @@
     let prices_resolved = false;
     $: prices = (fetchCustomerPrices)(ticket.selectedCustomer).then(() => prices_resolved = true);
     $: totalCost = currentCart.reduce((accumulator, currentValue) => accumulator + (currentValue.qty * currentValue.price), 0);
-    $: filteredProducts = ($products.filter(p => p.name.toLowerCase().includes(productQuery.toLowerCase())));
+    $: productKeyword = productQuery.trim().split(" ");
+    $: filteredProducts = ($products.filter(p => productKeyword.every(query => p.name.toLowerCase().includes(query.toLowerCase()))));
     $: currentCart = getCart(ticket.cartItems, ticket.selectedCustomer, prices, prices_resolved);
 
     tickets.subscribe(value => ticket = value[$currentTicket]);
@@ -230,7 +231,7 @@
     <div style="margin-right: 30vw; width: 100%;">
         <ProductCatalogSearchBar bind:products={$products} bind:productQuery={productQuery} />
         <div class="catalog-container">
-            <ProductCatalog pageLimit={10} bind:currentPage={ticket.currentPage} bind:productCatalog={filteredProducts} />
+            <ProductCatalog pageLimit={30} bind:currentPage={ticket.currentPage} bind:productCatalog={filteredProducts} />
         </div>
     </div>
     <div class="position-fixed d-flex flex-column border-start end-0" style="width: 30vw; height: calc(100vh - 2.5rem + 2px);">

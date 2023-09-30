@@ -62,12 +62,12 @@
         {#if productCatalog.length > pageLimit}
             <ul class="pagination justify-content-center">
                 <li on:click={() => {if (currentPage != 1) currentPage--}} class="page-item" class:disabled={currentPage == 1}>
-                    <a class="page-link" aria-label="Previous">
+                    <a href="#top" class="page-link" aria-label="Previous">
                         <img src={ChevronLeft} alt="Previous">
                     </a>
                 </li>
                 <li on:click={() => {if (Math.ceil(productCatalog.length / pageLimit) != currentPage) currentPage++}} class="page-item" class:disabled={Math.ceil(productCatalog.length / pageLimit) == currentPage}>
-                    <a class="page-link" aria-label="Next">
+                    <a href="#top" class="page-link" aria-label="Next">
                         <img src={ChevronRight} alt="Next">
                     </a>
                 </li>
