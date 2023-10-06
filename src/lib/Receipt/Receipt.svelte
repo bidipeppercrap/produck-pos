@@ -1,5 +1,7 @@
 <script>
-    import { company } from "../../store";
+    import { format } from "date-fns";
+    import logo from "$lib/assets/receipt_logo.svg";
+
     export let orderItems = [];
     export let cash = 0;
     export let customer = null;
@@ -20,6 +22,10 @@
 
         return formatter.format(number);
     }
+
+    function simpleDateTime(datetime) {
+        return format(new Date(datetime), "dd MMM yyyy '-' hh:mm a");
+    }
 </script>
 
 <style>
@@ -30,6 +36,10 @@
     .receipt-header {
         display: grid;
         margin-bottom: .5rem;
+    }
+    .receipt-header > img {
+        height: 50px;
+        justify-self: center;
     }
     .receipt-items {
         padding-top: .25rem;
@@ -132,11 +142,12 @@
 
 <div class="receipt-container">
     <div class="receipt-header">
-        {#if $company.logo}
+        <!-- {#if $company.logo}
             <img src={$company.logo} alt="Company logo">
         {:else}
             <h5 class="text-center">{$company.name}</h5>
-        {/if}
+        {/if} -->
+        <img src={logo} alt="company logo">
         {#if customer}<div class="receipt-customer">Customer: {customer}</div>{/if}
     </div>
     <div class="receipt-items border-top border-bottom">
@@ -169,8 +180,12 @@
             <span class="cost-value">{money(change)}</span>
         </div>
         <div class="receipt-details">
-            <div class="order-id">Order {orderId}</div>
-            <div class="order-date">{orderDate}</div>
+            <!-- <div class="order-id">Order {orderId}</div> -->
+            <div class="order-date">
+                <strong>
+                    {simpleDateTime(orderDate)}
+                </strong>
+            </div>
         </div>
     </div>
 </div>
