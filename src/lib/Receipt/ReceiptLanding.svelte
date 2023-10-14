@@ -14,6 +14,8 @@
 </script>
 
 <style>
+    @import "../assets/receipt.css";
+
     .page-wrapper {
         display: flex;
         padding-top: calc(2.5rem - 2px);
@@ -29,12 +31,6 @@
 
     .header {
         display: flex;
-    }
-
-    @media print {
-        * {
-            display: none;
-        }
     }
 </style>
 

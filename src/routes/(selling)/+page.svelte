@@ -1,6 +1,6 @@
 <script>
     import { onMount, setContext } from "svelte";
-    import { tickets, currentTicket, products, customers } from "../../store";
+    import { tickets, currentTicket, products } from "../../store";
     import Order from "$lib/Order.svelte";
     import ProductCatalog from "$lib/ProductCatalog.svelte";
     import BarcodeNotFound from "$lib/BarcodeNotFound.svelte";
@@ -26,16 +26,6 @@
     let selectCustomerModal = false;
     let showCartDetail = false;
     let productQty = 1;
-    let receipt = {
-        orderItems: [{
-            id: 0,
-            name: "",
-            price: 0,
-            qty: 0
-        }],
-        cash: 0,
-        customer: null
-    };
 
     let prices = [];
     $: (fetchCustomerPrices)(ticket.selectedCustomer).then(data => prices = data);
@@ -150,7 +140,7 @@
     }
 
     async function pay(cash = "0") {
-        receipt = {
+        ticket.receipt = {
             orderItems: [...currentCart],
             cash: parseInt(cash),
             customer: ticket.selectedCustomer
@@ -222,7 +212,7 @@
 {#if ticket.landing == "payment"}
 <PaymentLanding bind:totalCost={totalCost} bind:landing={ticket.landing} />
 {:else if ticket.landing == "receipt"}
-<ReceiptLanding bind:landing={ticket.landing} orderItems={receipt.orderItems} cash={receipt.cash} customer={receipt.customer} />
+<ReceiptLanding bind:landing={ticket.landing} orderItems={ticket.receipt.orderItems} cash={ticket.receipt.cash} customer={ticket.receipt.customer} />
 {:else if ticket.landing == "return"}
 <ReturnLanding bind:landing={ticket.landing} bind:orderItems={ticket.cartItems} />
 {:else}

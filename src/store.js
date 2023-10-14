@@ -15,7 +15,17 @@ export const tickets = writable([
         currentPage: 1,
         renameMode: false,
         landing: "catalog",
-        selectedCustomer: null
+        selectedCustomer: null,
+        receipt: {
+            orderItems: [{
+                id: 0,
+                name: "",
+                price: 0,
+                qty: 0
+            }],
+            cash: 0,
+            customer: null
+        }
     }
 ]);
 export const products = writable([]);

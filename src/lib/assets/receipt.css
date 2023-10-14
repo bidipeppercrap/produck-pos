@@ -1,0 +1,17 @@
+@media print {
+    * {
+        visibility: hidden;
+    }
+
+    .receipt-container {
+        visibility: visible;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .receipt-container * {
+        visibility: visible;
+    }
+}

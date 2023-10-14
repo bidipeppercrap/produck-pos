@@ -35,7 +35,6 @@
     }
     .receipt-header {
         display: grid;
-        margin-bottom: .5rem;
     }
     .receipt-header > img {
         height: 50px;
@@ -49,7 +48,7 @@
     }
     .receipt-details {
         display: grid;
-        margin-top: 1.5rem;
+        margin-top: .5rem;
         font-size: .75rem;
         justify-content: center;
         text-align: center;
