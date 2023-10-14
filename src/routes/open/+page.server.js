@@ -5,7 +5,7 @@ export async function load({ fetch, cookies }) {
     const sessionRes = await fetch("/api/current-session");
     const session = await sessionRes.json();
 
-    cookies.set("pos_opening", "true", { path: "/" });
+    cookies.set("pos_opening", "true", { secure: false, path: "/" });
     
     return { session };
 }
