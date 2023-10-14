@@ -8,6 +8,8 @@ export async function GET({ fetch, locals, cookies }) {
     });
     const posResult = await posRes.json();
 
+    if (!posResult.payload.lastSession) return new Response(JSON.stringify({ closedAt: "opening" }));
+
     const sessionRes = await fetchServer(fetch, `/possessions/${posResult.payload.lastSession.id}`, {
         headers: { "Authorization": `Bearer ${locals.authToken}`}
     });
