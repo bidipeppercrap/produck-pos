@@ -18,4 +18,4 @@ const makeServerFetchWithBaseUrl = (/** @type {string} */ baseUrl) => {
 }
 
 export const fetchClient = makeFetchWithBaseUrl(fetch, "http://localhost:5000");
-export const fetchServer = makeServerFetchWithBaseUrl("http://localhost:5000");
+export const fetchServer = makeServerFetchWithBaseUrl("http://192.168.1.2:5000");
