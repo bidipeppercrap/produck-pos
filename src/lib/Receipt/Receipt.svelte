@@ -37,7 +37,8 @@
         display: grid;
     }
     .receipt-header > img {
-        height: 50px;
+	max-width: 200px;
+        max-height: 100px;
         justify-self: center;
     }
     .receipt-items {
